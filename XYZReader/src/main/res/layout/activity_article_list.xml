@@ -1,27 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    >
 
+
+    <!--TODO: Tablet: if we make it a horizontally scrollable cardview list, is it weird to refresh vertically?-->
+    <!--TODO: Seems like this refresh does not work. Make it work (in the code)-->
+    <!--Ok it just seems semi-broken now.-->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginStart="@dimen/activity_default_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_default_horizontal_margin"
+        >
 
+        <!--TODO: make the scrollbar work-->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:scrollbarStyle="outsideOverlay"
-            android:paddingTop="116dp"
-            android:paddingLeft="@dimen/list_side_margin"
-            android:paddingRight="@dimen/list_side_margin"
-            android:paddingBottom="28dp" />
+            android:layout_marginStart="@dimen/activity_default_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_default_horizontal_margin"
+            />
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/toolbar"/>
 
+        <include layout="@layout/toolbar"/>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>
