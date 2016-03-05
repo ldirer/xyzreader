@@ -22,6 +22,7 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 /**
+ * //TODO: Remove that useless class??
  * A simple {@link LinearLayout} subclass that has a maxWidth
  */
 public class MaxWidthLinearLayout extends LinearLayout {
