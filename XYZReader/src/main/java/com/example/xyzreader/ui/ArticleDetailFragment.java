@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -48,18 +49,9 @@ public class ArticleDetailFragment extends Fragment implements
     private Cursor mCursor;
     private long mItemId;
     private View mRootView;
-    private int mMutedColor = 0xFF333333;
-    private NestedScrollView mScrollView;
-    private FrameLayout mFrameLayout;
-    private ColorDrawable mStatusBarColorDrawable;
 
-    private int mTopInset;
-    private View mPhotoContainerView;
-    private ImageView mPhotoView;
-    private int mScrollY;
     private boolean mIsCard = false;
-    private int mStatusBarFullOpacityBottom;
-    private NetworkImageView mToolbarImage;
+    private ImageView mToolbarImage;
     private ImageLoader mImageLoader;
     private RequestQueue mRequestQueue;
 
@@ -80,8 +72,6 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
-        mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
-                R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
     }
 
@@ -104,64 +94,35 @@ public class ArticleDetailFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
-        mFrameLayout = (FrameLayout)
-                mRootView.findViewById(R.id.draw_insets_frame_layout);
 
-        mScrollView = (NestedScrollView) mRootView.findViewById(R.id.scrollview);
-
-        mStatusBarColorDrawable = new ColorDrawable(0);
-        mToolbarImage = (NetworkImageView) getActivity().findViewById(R.id.toolbar_image);
+        mToolbarImage = (ImageView) getActivity().findViewById(R.id.toolbar_image);
         mRequestQueue = Volley.newRequestQueue(getActivity());
 
-        bindViews();
         return mRootView;
     }
 
-    // TODO: Hmmm maybe this should be kept in! It adapts the status bar depending on the image colors.
-    // TODO: Not sure why we need a status bar other than the image in the first place though! We probably don't.
-//    private void updateStatusBar() {
-//        int color = 0;
-//        if (mPhotoView != null && mTopInset != 0 && mScrollY > 0) {
-//            float f = progress(mScrollY,
-//                    mStatusBarFullOpacityBottom - mTopInset * 3,
-//                    mStatusBarFullOpacityBottom - mTopInset);
-//            color = Color.argb((int) (255 * f),
-//                    (int) (Color.red(mMutedColor) * 0.9),
-//                    (int) (Color.green(mMutedColor) * 0.9),
-//                    (int) (Color.blue(mMutedColor) * 0.9));
-//        }
-//        mStatusBarColorDrawable.setColor(color);
-//        mFrameLayout.setInsetBackground(mStatusBarColorDrawable);
-//    }
-
-
-
     private void bindViews() {
+        Log.d(LOG_TAG, "in bindViews");
         if (mRootView == null) {
             return;
         }
 
-        TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
-        TextView bylineView = (TextView) mRootView.findViewById(R.id.article_byline);
-        bylineView.setMovementMethod(new LinkMovementMethod());
+        TextView titleView = (TextView) getActivity().findViewById(R.id.article_title);
+        TextView bylineView = (TextView) getActivity().findViewById(R.id.article_byline);
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
+//        TODO: hide subtitle in the collapsed toolbar. Potential source (most voted ans):
+//        http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
         if (mCursor != null) {
-            mRootView.setAlpha(0);
-            mRootView.setVisibility(View.VISIBLE);
-            mRootView.animate().alpha(1);
-            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            bylineView.setText(Html.fromHtml(
-                    DateUtils.getRelativeTimeSpanString(
-                            mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_ALL).toString()
-                            + " by <font color='#ffffff'>"
-                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                            + "</font>"));
+            bodyView.setText(mCursor.getString(ArticleLoader.Query.BODY));
+//            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            //noinspection ConstantConditions
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
+            bylineView.setText(Utils.getDateAuthorLineText(getActivity(), mCursor));
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
 
+            //TODO: fix image loading: the right image is loaded *at first*, then another one takes its place!
 //            mImageLoader = new ImageLoader();
             ImageRequest imageRequest = new ImageRequest(
                     mCursor.getString(ArticleLoader.Query.PHOTO_URL),
@@ -208,10 +169,10 @@ public class ArticleDetailFragment extends Fragment implements
 //                        }
 //                    });
         } else {
-            mRootView.setVisibility(View.GONE);
-            titleView.setText("N/A");
-            bylineView.setText("N/A" );
-            bodyView.setText("N/A");
+            Log.d(LOG_TAG, "Cursor was null in bind views, cannot set title, body and 'byline'!");
+            titleView.setText("");
+            bylineView.setText("");
+            bodyView.setText("");
         }
     }
 
@@ -222,7 +183,9 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(LOG_TAG, "in onLoadFinished");
         if (!isAdded()) {
+            Log.d(LOG_TAG, "Fragment not added yet!??! And loader created...");
             if (cursor != null) {
                 cursor.close();
             }
@@ -242,17 +205,6 @@ public class ArticleDetailFragment extends Fragment implements
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
-        bindViews();
     }
 
-    public int getUpButtonFloor() {
-        if (mPhotoContainerView == null || mPhotoView.getHeight() == 0) {
-            return Integer.MAX_VALUE;
-        }
-
-        // account for parallax
-        return mIsCard
-                ? (int) mPhotoContainerView.getTranslationY() + mPhotoView.getHeight() - mScrollY
-                : mPhotoView.getHeight() - mScrollY;
-    }
 }

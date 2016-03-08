@@ -2,7 +2,6 @@ package com.example.xyzreader.remote;
 
 import android.util.Log;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -11,7 +10,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import okhttp3.OkHttpClient;
@@ -19,20 +17,19 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class RemoteEndpointUtil {
-    private static final String TAG = "RemoteEndpointUtil";
+    private static final String TAG = RemoteEndpointUtil.class.getSimpleName();
 
     private RemoteEndpointUtil() {
     }
 
     public static JSONArray fetchJsonArray() {
-        String itemsJson = null;
+        String itemsJson;
         try {
             itemsJson = fetchPlainText(Config.BASE_URL);
         } catch (IOException e) {
             Log.e(TAG, "Error fetching items JSON", e);
             return null;
         }
-
         // Parse JSON
         try {
             JSONTokener tokener = new JSONTokener(itemsJson);
@@ -52,10 +49,13 @@ public class RemoteEndpointUtil {
         return new String(fetch(url), "UTF-8" );
     }
 
-    // Source: https://gist.github.com/popnfresh234/30a508863667300483a7
+    /**
+     * A method that'll fetch about anything.
+     * Source: https://gist.github.com/popnfresh234/30a508863667300483a7
+     * @throws IOException
+     */
     static byte[] fetch(URL url) throws IOException {
         InputStream in = null;
-
         try {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
