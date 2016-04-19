@@ -5,21 +5,14 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.text.Html;
-import android.text.format.DateUtils;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,7 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -53,7 +45,10 @@ public class ArticleDetailFragment extends Fragment implements
     private boolean mIsCard = false;
     private ImageView mToolbarImage;
     private ImageLoader mImageLoader;
-    private RequestQueue mRequestQueue;
+    private TextView mTitleView;
+    private TextView mByLineView;
+    private TextView mBodyView;
+    private ActionBar mActionBar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -62,21 +57,18 @@ public class ArticleDetailFragment extends Fragment implements
     public ArticleDetailFragment() {
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "in onCreate");
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             mItemId = getArguments().getLong(ARG_ITEM_ID);
+            Log.d(LOG_TAG, String.format("created fragment with item id: %d", mItemId));
         }
 
         mIsCard = getResources().getBoolean(R.bool.detail_is_card);
         setHasOptionsMenu(true);
-    }
-
-    public ArticleDetailActivity getActivityCast() {
-        return (ArticleDetailActivity) getActivity();
     }
 
     @Override
@@ -95,91 +87,38 @@ public class ArticleDetailFragment extends Fragment implements
             Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_article_detail, container, false);
 
-        mToolbarImage = (ImageView) getActivity().findViewById(R.id.toolbar_image);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
+        mBodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
         return mRootView;
     }
 
     private void bindViews() {
-        Log.d(LOG_TAG, "in bindViews");
+        Log.d(LOG_TAG, String.format("in bindViews with item id: %d", mItemId));
         if (mRootView == null) {
             return;
         }
 
-        TextView titleView = (TextView) getActivity().findViewById(R.id.article_title);
-        TextView bylineView = (TextView) getActivity().findViewById(R.id.article_byline);
-        TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
+        // TODO: is that a good font?
+//        mBodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
-//        TODO: hide subtitle in the collapsed toolbar. Potential source (most voted ans):
-//        http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
         if (mCursor != null) {
-            bodyView.setText(mCursor.getString(ArticleLoader.Query.BODY));
-//            titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
-            //noinspection ConstantConditions
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
-            bylineView.setText(Utils.getDateAuthorLineText(getActivity(), mCursor));
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
 
-            //TODO: fix image loading: the right image is loaded *at first*, then another one takes its place!
-//            mImageLoader = new ImageLoader();
-            ImageRequest imageRequest = new ImageRequest(
-                    mCursor.getString(ArticleLoader.Query.PHOTO_URL),
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            Log.d(LOG_TAG, "VOLLEY GOT US DAT BITMAP");
-                            mToolbarImage.setImageBitmap(bitmap);
-                        }
-                    }
-                    , 200, 200, null, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Log.d(LOG_TAG, "AAAAAAAAAAH VOLLEY ERROR VOLLEY ERROR");
-                    Log.d(LOG_TAG, "Btw, url was:" + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
-                    Log.d(LOG_TAG, "Dat volley message gonna help us:" + volleyError.getMessage());
-                    Log.d(LOG_TAG, Log.getStackTraceString(volleyError));
-                }
-            });
-            mRequestQueue.add(imageRequest);
+            mBodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+            // Log.d(LOG_TAG, "BODY: " + mCursor.getString(ArticleLoader.Query.BODY));
 
-//            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-//                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-//                        @Override
-//                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-//                            Bitmap bitmap = imageContainer.getBitmap();
-//                            if (bitmap != null) {
-//                                Palette p = Palette.generate(bitmap, 12);
-//                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-////                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-//                                mToolbarImage.setImageBitmap(imageContainer.getBitmap());
-//                                mRootView.findViewById(R.id.meta_bar)
-//                                        .setBackgroundColor(mMutedColor);
-////                                updateStatusBar();
-//                            }
-//                            else {
-//                                Log.d(LOG_TAG, "No bitmap found!!");
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onErrorResponse(VolleyError volleyError) {
-//
-//                        }
-//                    });
+
         } else {
-            Log.d(LOG_TAG, "Cursor was null in bind views, cannot set title, body and 'byline'!");
-            titleView.setText("");
-            bylineView.setText("");
-            bodyView.setText("");
+            Log.d(LOG_TAG, "Cursor was null in bind views, cannot set body!");
+            mBodyView.setText("");
         }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(LOG_TAG, String.format("in onCreateLoader with itemId: %d", mItemId));
         return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
@@ -194,7 +133,7 @@ public class ArticleDetailFragment extends Fragment implements
 
         mCursor = cursor;
         if (mCursor != null && !mCursor.moveToFirst()) {
-            Log.e(TAG, "Error reading item detail cursor");
+            Log.e(TAG, "Detail cursor empty!");
             mCursor.close();
             mCursor = null;
         }

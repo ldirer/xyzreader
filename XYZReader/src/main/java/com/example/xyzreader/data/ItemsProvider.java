@@ -11,12 +11,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ItemsProvider extends ContentProvider {
-	private SQLiteOpenHelper mOpenHelper;
+    private static final String LOG_TAG = ItemsProvider.class.getSimpleName();
+    private SQLiteOpenHelper mOpenHelper;
 
 	interface Tables {
 		String ITEMS = "items";
@@ -56,8 +58,10 @@ public class ItemsProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.d(LOG_TAG, "in query");
 		final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 		final SelectionBuilder builder = buildSelection(uri);
+		//TODO: query method looks dubious (does not use 'where' clause?)
 		Cursor cursor = builder.where(selection, selectionArgs).query(db, projection, sortOrder);
         if (cursor != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -67,6 +71,7 @@ public class ItemsProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
+        Log.d(LOG_TAG, "in insert");
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		final int match = sUriMatcher.match(uri);
 		switch (match) {
@@ -83,6 +88,7 @@ public class ItemsProvider extends ContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        Log.d(LOG_TAG, "in update");
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		final SelectionBuilder builder = buildSelection(uri);
         getContext().getContentResolver().notifyChange(uri, null);
@@ -91,6 +97,7 @@ public class ItemsProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+        Log.d(LOG_TAG, "in delete");
 		final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		final SelectionBuilder builder = buildSelection(uri);
         getContext().getContentResolver().notifyChange(uri, null);
