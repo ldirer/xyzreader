@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.ShareCompat;
@@ -69,19 +70,44 @@ public class ArticleDetailActivity extends AppCompatActivity
         getLoaderManager().initLoader(0, null, this);
 
 
-//        TODO: hide subtitle in the collapsed toolbar. Potential source (most voted ans):
-//        http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
         // Pratik Butani's answer for issues with setTitle not updating the title:
         // http://stackoverflow.com/questions/26486730/in-android-app-toolbar-settitle-method-has-no-effect-application-name-is-shown
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+
+
+//        Hide subtitle in the collapsed toolbar. Source (most voted ans):
+//        http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
+        final AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.toolbar_container);
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean subtitleHidden = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = mAppBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    mByLineView.setVisibility(View.GONE);
+                    subtitleHidden = true;
+                } else if(subtitleHidden) {
+                    mByLineView.setVisibility(View.VISIBLE);
+                    subtitleHidden = false;
+                }
+            }
+        });
         setSupportActionBar(mToolbar);
 
         mCollapsingToolbarLayout.setTitleEnabled(true);
         // By default the title will show the name of the app: we don't want that.
         mCollapsingToolbarLayout.setTitle("");
-        // TODO: should I re-enable this stuff?
-        //mActionBar.setDisplayHomeAsUpEnabled(true);
+
+        // We add the "left-arrow-back-button".
+        mActionBar = getSupportActionBar();
+        if (mActionBar != null) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mToolbarImage = (ImageView) findViewById(R.id.toolbar_image);
 
