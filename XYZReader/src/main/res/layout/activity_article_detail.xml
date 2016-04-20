@@ -1,5 +1,6 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -14,12 +15,11 @@
 
 
     <!--TODO: no hardcoded height-->
-    <android.support.design.widget.AppBarLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar_container"
         android:layout_width="match_parent"
-        android:layout_height="224dp"
+        android:layout_height="336dp"
         android:background="@android:color/transparent">
         <!--TODO: why don't I get tab completion for @android:color/stuff?-->
 
@@ -28,20 +28,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:expandedTitleMarginStart="@dimen/expanded_title_horizontal_margin"
+            >
 
 
-            <!--TODO: add content description in the code? Title of article?-->
-            <ImageView
-                android:id="@+id/toolbar_image"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@drawable/logo"
-                app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="1"
-                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
-                />
+                android:layout_height="match_parent">
+
+                <!--TODO: add content description in the code? Title of article?-->
+                <ImageView
+                    android:id="@+id/toolbar_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/logo"
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="1"
+                    app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/toolbar_scrim" />
+            </FrameLayout>
 
 
             <android.support.v7.widget.Toolbar
@@ -50,22 +63,26 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+                />
+
 
             <LinearLayout
                 android:id="@+id/meta_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
+                <!--TODO: align properly.-->
                 <TextView
                     android:id="@+id/article_byline"
                     style="?android:attr/textAppearanceSmall"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:layout_marginStart="@dimen/expanded_title_horizontal_margin"
+                    android:layout_marginEnd="@dimen/expanded_title_horizontal_margin"
+                    tools:text="bouga 16, 2016 by Bougadabou" />
             </LinearLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>

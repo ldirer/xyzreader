@@ -72,7 +72,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         // Pratik Butani's answer for issues with setTitle not updating the title:
         // http://stackoverflow.com/questions/26486730/in-android-app-toolbar-settitle-method-has-no-effect-application-name-is-shown
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
 
 
