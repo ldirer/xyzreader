@@ -1,4 +1,6 @@
 .gradle
 .idea
 xyzreader.iml
-build.DS_Store
+build
+.DS_Store
+

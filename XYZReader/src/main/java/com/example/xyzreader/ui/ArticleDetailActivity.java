@@ -33,11 +33,13 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
+import java.util.Objects;
+
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
 public class ArticleDetailActivity extends AppCompatActivity
-        implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
+        implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = ArticleDetailActivity.class.getSimpleName();
     private Cursor mCursor;
@@ -61,7 +63,7 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_article_detail);
 
-        getSupportLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, this);
 
         // Pratik Butani's answer for issues with setTitle not updating the title:
         // http://stackoverflow.com/questions/26486730/in-android-app-toolbar-settitle-method-has-no-effect-application-name-is-shown
@@ -115,6 +117,8 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
         onPageChangeListener = new ViewPager.OnPageChangeListener() {
+            public final Object IMAGE_REQUEST_TAG = "IMAGE_REQUEST_TAG";
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -148,6 +152,9 @@ public class ArticleDetailActivity extends AppCompatActivity
                         Log.d(LOG_TAG, Log.getStackTraceString(volleyError));
                     }
                 });
+                imageRequest.setTag(this.IMAGE_REQUEST_TAG);
+                // Cancel previous requests so there is no 'race' to be the image set on the article.
+                mRequestQueue.cancelAll(this.IMAGE_REQUEST_TAG);
                 mRequestQueue.add(imageRequest);
                 mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
                 mToolbarImage.setContentDescription(mCursor.getString(ArticleLoader.Query.TITLE));
@@ -190,22 +197,21 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
 
     @Override
-    public void onLoadFinished(android.support.v4.content.Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         // Note if we open the app and browse through items this is called only once.
-        Log.d(LOG_TAG, "in onLoadFinished");
         mCursor = cursor;
         mPagerAdapter.notifyDataSetChanged();
 
         // Select the start ID
         if (mStartId > 0) {
             mCursor.moveToFirst();
-            // TODO: optimize. For now this is just a loop looking for the right item (matching on ID)
+            // We could optimize this. For now this is just a loop looking for the right item (matching on ID)
             while (!mCursor.isAfterLast()) {
                 if (mCursor.getLong(ArticleLoader.Query._ID) == mStartId) {
                     final int position = mCursor.getPosition();
@@ -230,7 +236,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(android.support.v4.content.Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }
@@ -255,8 +261,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
             Log.d(LOG_TAG, String.format("in getItem with position: %d - id: %d", position,
                     mCursor.getLong(ArticleLoader.Query._ID)));
-            arguments.putLong(ArticleDetailFragment.ARG_ITEM_ID,
-                    mCursor.getLong(ArticleLoader.Query._ID));
+            arguments.putString(ArticleDetailFragment.ARG_BODY_TEXT,
+                    mCursor.getString(ArticleLoader.Query.BODY));
             ArticleDetailFragment fragment = new ArticleDetailFragment();
             fragment.setArguments(arguments);
             return fragment;
