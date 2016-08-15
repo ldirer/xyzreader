@@ -30,8 +30,7 @@ import com.example.xyzreader.data.ArticleLoader;
  * either contained in a {@link ArticleListActivity} in two-pane mode (on
  * tablets) or a {@link ArticleDetailActivity} on handsets.
  */
-public class ArticleDetailFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+public class ArticleDetailFragment extends Fragment {
     private static final String TAG = "ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
@@ -79,7 +78,6 @@ public class ArticleDetailFragment extends Fragment implements
         // the fragment's onCreate may cause the same LoaderManager to be dealt to multiple
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
         // we do this in onActivityCreated.
-        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -98,14 +96,9 @@ public class ArticleDetailFragment extends Fragment implements
             return;
         }
 
-        // TODO: is that a good font?
-//        mBodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
-
         if (mCursor != null) {
-
             mBodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
-            // Log.d(LOG_TAG, "BODY: " + mCursor.getString(ArticleLoader.Query.BODY));
-
+            Log.d(LOG_TAG, "BODY: " + mCursor.getString(ArticleLoader.Query.BODY));
 
         } else {
             Log.d(LOG_TAG, "Cursor was null in bind views, cannot set body!");
@@ -113,37 +106,37 @@ public class ArticleDetailFragment extends Fragment implements
         }
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Log.d(LOG_TAG, String.format("in onCreateLoader with itemId: %d", mItemId));
-        return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
-    }
+//    @Override
+//    public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+//        Log.d(LOG_TAG, String.format("in onCreateLoader with itemId: %d", mItemId));
+//        return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
+//    }
 
 
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        Log.d(LOG_TAG, "in onLoadFinished");
-        if (!isAdded()) {
-            Log.d(LOG_TAG, "Fragment not added yet!??! And loader created...");
-            if (cursor != null) {
-                cursor.close();
-            }
-            return;
-        }
+//    @Override
+//    public void onLoadFinished(android.support.v4.content.Loader<Cursor> cursorLoader, Cursor cursor) {
+//        Log.d(LOG_TAG, "in onLoadFinished");
+//        if (!isAdded()) {
+//            Log.d(LOG_TAG, "Fragment not added yet!??! And loader created...");
+//            if (cursor != null) {
+//                cursor.close();
+//            }
+//            return;
+//        }
+//
+//        mCursor = cursor;
+//        if (mCursor != null && !mCursor.moveToFirst()) {
+//            Log.e(TAG, "Detail cursor empty!");
+//            mCursor.close();
+//            mCursor = null;
+//        }
+//
+//        bindViews();
+//    }
 
-        mCursor = cursor;
-        if (mCursor != null && !mCursor.moveToFirst()) {
-            Log.e(TAG, "Detail cursor empty!");
-            mCursor.close();
-            mCursor = null;
-        }
-
-        bindViews();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-        mCursor = null;
-    }
+//    @Override
+//    public void onLoaderReset(android.support.v4.content.Loader<Cursor> cursorLoader) {
+//        mCursor = null;
+//    }
 
 }

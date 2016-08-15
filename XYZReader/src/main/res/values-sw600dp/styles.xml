@@ -17,21 +17,10 @@
 
 <resources>
 
-    <!--TODO: add fab style (is there one by default?)-->
-
-    <style name="MyBaseTheme" parent="@style/Theme.AppCompat.Light.NoActionBar"/>
-
-    <style name="Theme.Bacon" parent="MyBaseTheme">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
-    </style>
-
-
+    <style name="MyBaseTheme" parent="Theme.AppCompat.Light.Dialog"/>
     <style name="Theme.Bacon.Detail" parent="Theme.Bacon">
-
+        <item name="android:textColorPrimary">@android:color/holo_red_dark</item>
+        <item name="android:textColorSecondary">@android:color/holo_red_dark</item>
     </style>
 
 </resources>

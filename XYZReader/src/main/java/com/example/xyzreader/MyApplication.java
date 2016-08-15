@@ -13,7 +13,14 @@ public class MyApplication extends Application {
     public void onCreate(){
         super.onCreate();
         Log.d(LOG_TAG, "USING MY CUSTOM APPLICATION CLASS");
-        Stetho.initializeWithDefaults(this);
+//        Stetho.initializeWithDefaults(this);
+        Stetho.newInitializerBuilder(this)
+                .enableDumpapp(
+                        Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(
+                        Stetho.defaultInspectorModulesProvider(this))
+                .build();
+
     }
 
 }

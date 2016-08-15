@@ -9,5 +9,7 @@
     <dimen name="fab_margin">24dp</dimen>
     <dimen name="activity_default_horizontal_margin">16dp</dimen>
     <dimen name="expanded_title_horizontal_margin">16dp</dimen>
+    <dimen name="keyline_1">16dp</dimen>
+    <dimen name="keyline_2">72dp</dimen>
 
 </resources>

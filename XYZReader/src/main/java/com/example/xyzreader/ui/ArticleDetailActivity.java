@@ -37,7 +37,7 @@ import com.example.xyzreader.data.ItemsContract;
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
 public class ArticleDetailActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+        implements android.support.v4.app.LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = ArticleDetailActivity.class.getSimpleName();
     private Cursor mCursor;
@@ -58,26 +58,18 @@ public class ArticleDetailActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: Maybe make the activity Immersive (hide status bar). Seems unnecessary but if it was supposed to be there...
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            getWindow().getDecorView().setSystemUiVisibility(
-//                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-//        }
 
         setContentView(R.layout.activity_article_detail);
 
-        getLoaderManager().initLoader(0, null, this);
-
+        getSupportLoaderManager().initLoader(0, null, this);
 
         // Pratik Butani's answer for issues with setTitle not updating the title:
         // http://stackoverflow.com/questions/26486730/in-android-app-toolbar-settitle-method-has-no-effect-application-name-is-shown
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
 
-
-//        Hide subtitle in the collapsed toolbar. Source (most voted ans):
-//        http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
+        // Hide subtitle in the collapsed toolbar. Source (most voted ans):
+        // http://stackoverflow.com/questions/31662416/show-collapsingtoolbarlayout-title-only-when-collapsed
         final AppBarLayout mAppBarLayout = (AppBarLayout) findViewById(R.id.toolbar_container);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             boolean subtitleHidden = false;
@@ -146,23 +138,22 @@ public class ArticleDetailActivity extends AppCompatActivity
 
                             @Override
                             public void onResponse(Bitmap bitmap) {
-                                Log.d(LOG_TAG, "VOLLEY GOT US DAT BITMAP");
-                                Log.d(LOG_TAG, "Btw, url was:" + imageUrl);
                                 mToolbarImage.setImageBitmap(bitmap);
                             }
                         }, 200, 200, null, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d(LOG_TAG, "AAAAAAAAAAH VOLLEY ERROR VOLLEY ERROR");
-                        Log.d(LOG_TAG, "Btw, url was:" + mCursor.getString(ArticleLoader.Query.PHOTO_URL));
+                        Log.d(LOG_TAG, "AAAAAAAAAAH VOLLEY ERROR VOLLEY ERROR on url: " +
+                                mCursor.getString(ArticleLoader.Query.PHOTO_URL));
                         Log.d(LOG_TAG, Log.getStackTraceString(volleyError));
                     }
                 });
                 mRequestQueue.add(imageRequest);
                 mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
+                mToolbarImage.setContentDescription(mCursor.getString(ArticleLoader.Query.TITLE));
+
                 mByLineView.setText(Utils.getDateAuthorLineText(ArticleDetailActivity.this, mCursor));
         }
-
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -199,12 +190,13 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
+
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> cursorLoader, Cursor cursor) {
         // Note if we open the app and browse through items this is called only once.
         Log.d(LOG_TAG, "in onLoadFinished");
         mCursor = cursor;
@@ -238,7 +230,7 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> cursorLoader) {
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }

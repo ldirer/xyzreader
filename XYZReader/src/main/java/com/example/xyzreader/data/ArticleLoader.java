@@ -1,7 +1,7 @@
 package com.example.xyzreader.data;
 
 import android.content.Context;
-import android.content.CursorLoader;
+import android.support.v4.content.CursorLoader;
 import android.net.Uri;
 import android.util.Log;
 
@@ -21,7 +21,6 @@ public class ArticleLoader extends CursorLoader {
 
     private ArticleLoader(Context context, Uri uri) {
         super(context, uri, Query.PROJECTION, null, null, ItemsContract.Items.DEFAULT_SORT);
-        Log.d(LOG_TAG, String.format("in ArticleLoader constructor with uri %s", uri.toString()));
     }
 
     public interface Query {
