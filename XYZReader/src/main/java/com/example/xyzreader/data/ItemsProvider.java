@@ -61,7 +61,6 @@ public class ItemsProvider extends ContentProvider {
         Log.d(LOG_TAG, "in query");
 		final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 		final SelectionBuilder builder = buildSelection(uri);
-		//TODO: query method looks dubious (does not use 'where' clause?)
 		Cursor cursor = builder.where(selection, selectionArgs).query(db, projection, sortOrder);
         if (cursor != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);

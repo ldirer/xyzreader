@@ -11,5 +11,11 @@
     <dimen name="expanded_title_horizontal_margin">16dp</dimen>
     <dimen name="keyline_1">16dp</dimen>
     <dimen name="keyline_2">72dp</dimen>
+    <dimen name="list_item_article_padding_vertical">16dp</dimen>
+    <dimen name="list_item_article_padding_horizontal">16dp</dimen>
+    <dimen name="cardview_list_item_horizontal_margin">8dp</dimen>
+    <dimen name="cardview_list_item_top_margin">24dp</dimen>
+    <dimen name="cardview_list_item_bottom_margin">12dp</dimen>
+    <dimen name="body_preview_bottom_padding">16dp</dimen>
 
 </resources>

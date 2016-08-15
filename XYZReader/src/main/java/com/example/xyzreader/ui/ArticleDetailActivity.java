@@ -131,10 +131,6 @@ public class ArticleDetailActivity extends AppCompatActivity
                 Log.d(LOG_TAG, "in onPageSelected");
                 Log.d(LOG_TAG, "in onPageSelected with position " + String.valueOf(position));
 
-
-                //TODO: fix image loading: Images in detail vs list view do not match
-                // TODO position is somehow offset by 1...
-
                 mCursor.moveToPosition(position);
                 final String imageUrl = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
                 ImageRequest imageRequest = new ImageRequest(imageUrl,
@@ -171,7 +167,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.addOnPageChangeListener(onPageChangeListener);
 
 
-        // TODO: That's some sharing functionality.
         findViewById(R.id.share_fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

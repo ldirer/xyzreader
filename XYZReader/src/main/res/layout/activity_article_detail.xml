@@ -10,11 +10,7 @@
         android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!--TODO: add gradient stuff for better display of title.-->
-    <!--TODO: add Title in pinned toolbar.-->
 
-
-    <!--TODO: no hardcoded height-->
     <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar_container"
@@ -22,7 +18,6 @@
         android:layout_height="336dp"
         android:background="@android:color/transparent"
         >
-        <!--TODO: why don't I get tab completion for @android:color/stuff?-->
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar_layout"
@@ -74,14 +69,13 @@
                 android:layout_gravity="bottom"
                 android:orientation="vertical">
 
-                <!--TODO: align properly.-->
                 <TextView
                     android:id="@+id/article_byline"
                     style="?android:attr/textAppearanceSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/expanded_title_horizontal_margin"
-                    android:layout_marginEnd="@dimen/expanded_title_horizontal_margin"
+                    android:layout_marginStart="@dimen/keyline_1"
+                    android:layout_marginEnd="@dimen/keyline_1"
                     tools:text="bouga 16, 2016 by Bougadabou"
                     android:textColor="@android:color/primary_text_dark"
                     />
@@ -100,7 +94,8 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:contentDescription="@string/action_share"
         android:src="@drawable/ic_share"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        />
 
 
 </android.support.design.widget.CoordinatorLayout>

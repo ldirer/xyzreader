@@ -16,11 +16,9 @@
 -->
 
 <resources>
-
-    <style name="MyBaseTheme" parent="Theme.AppCompat.Light.Dialog"/>
-    <style name="Theme.Bacon.Detail" parent="Theme.Bacon">
-        <item name="android:textColorPrimary">@android:color/holo_red_dark</item>
-        <item name="android:textColorSecondary">@android:color/holo_red_dark</item>
+    <!--<style name="MyBaseDetailTheme" parent="Theme.AppCompat.Light.Dialog"/>-->
+    <style name="MyBaseDetailTheme" parent="@style/Theme.AppCompat.Light.Dialog.MinWidth">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
     </style>
-
 </resources>

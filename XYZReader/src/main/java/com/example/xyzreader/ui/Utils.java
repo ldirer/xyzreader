@@ -18,4 +18,10 @@ public class Utils {
                 cursor.getString(ArticleLoader.Query.AUTHOR)));
 
     }
+
+    public static String getTextPreview(String text) {
+        String htmlString = Html.fromHtml(text).toString();
+        return (htmlString.substring(0, Math.min(htmlString.length(), 100)).concat("..."));
+
+    }
 }

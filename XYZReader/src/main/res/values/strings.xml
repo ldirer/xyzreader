@@ -8,7 +8,6 @@
     <string name="action_share">Share</string>
 
     <string name="up">Up</string>
-    <!--TODO: get the white color back for the author name!-->
     <string name="date_and_author_line"><xliff:g id='article_date'>%1$s</xliff:g> by <xliff:g id='author'>%2$s</xliff:g></string>
     <string name="image_for_the_article">Image for the article</string>
 
